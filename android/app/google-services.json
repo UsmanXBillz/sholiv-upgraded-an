@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "1065837250686",
+    "project_id": "video-stream-74848",
+    "storage_bucket": "video-stream-74848.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065837250686:android:7bc9011365605a1c2db02f",
+        "android_client_info": {
+          "package_name": "com.app.sholiv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA63idcgd88CC5qirUnINUDFqxMU7urlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065837250686:android:bdbfc3174ae636de2db02f",
+        "android_client_info": {
+          "package_name": "com.sholiv.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA63idcgd88CC5qirUnINUDFqxMU7urlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065837250686:android:3e0e5d724c1890a82db02f",
+        "android_client_info": {
+          "package_name": "com.streamapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA63idcgd88CC5qirUnINUDFqxMU7urlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,27 @@
+export default Colors = {
+  white: '#FFFFFF',
+  primary: '#020309',
+  blue: '#3F8DFD',
+  inputBg: "#1C1D21",
+  carbonBlack: '#16171E',
+  onlineGreen: '#2FFC3D',
+  placeholder: '#7D7D7D',
+  borderColorLight: '#707070',
+  toggleOff: '#6B6B6B',
+  lightGray: "#D2D2D2",
+  red: '#F32828',
+  badgeColor: '#EE1B1B',
+  black: '#000000',
+  backgroundGrayLight: '#676567',
+  backgroundGrayDark: '#676567',
+  status: '#8A8787',
+  dropdownPlaceholder: '#535353',
+  optionsBox: '#232323',
+  placeholderLight: '#BBBBBB',
+  pearlGrey: '#C5C5C5',
+  lightBlue: '#abcdfe',
+  mediumBlue: '#2b61ae',
+  validationRed: '#FF0000',
+  liveColorCode: 'rgba(0, 0, 0, 0.6)'
+
+};

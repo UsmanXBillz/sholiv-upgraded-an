@@ -1,0 +1,127 @@
+diff --git a/node_modules/react-native-chat-images/src/components/AsyncImage/index.js b/node_modules/react-native-chat-images/src/components/AsyncImage/index.js
+index fc5f304..f4e746a 100644
+--- a/node_modules/react-native-chat-images/src/components/AsyncImage/index.js
++++ b/node_modules/react-native-chat-images/src/components/AsyncImage/index.js
+@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
+ 
+ import { DefaultImage } from '../Icons';
+ import styles from './styles';
++import FastImage from 'react-native-fast-image';
++
+ 
+ class AsyncImage extends Component {
+   state = { error: false, loaded: false };
+@@ -15,7 +17,8 @@ class AsyncImage extends Component {
+     return (
+       <View style={styles.container}>
+         <View style={styles.innerView}>
+-          <Image
++          <FastImage
++            resizeMode={'stretch'}
+             onError={() => this.setState({ error: true, loaded: false })}
+             onLoad={() => this.setState({ loaded: true })}
+             source={{ uri: source }}
+@@ -23,7 +26,7 @@ class AsyncImage extends Component {
+           />
+ 
+           {!loaded && (
+-            <Image
++            <FastImage
+               source={{ uri: DefaultImage }}
+               style={[styles.placeHolderImg, { opacity: error ? 0.7 : 0.2 }]}
+             />
+diff --git a/node_modules/react-native-chat-images/src/components/ImageList/index.js b/node_modules/react-native-chat-images/src/components/ImageList/index.js
+index 3edc8cd..67b429e 100644
+--- a/node_modules/react-native-chat-images/src/components/ImageList/index.js
++++ b/node_modules/react-native-chat-images/src/components/ImageList/index.js
+@@ -8,9 +8,14 @@ import {
+   Modal,
+   ActivityIndicator,
+   Text,
++  SafeAreaView,
++  Platform,
+ } from 'react-native';
+ import ImageViewer from 'react-native-image-zoom-viewer';
+ import PropTypes from 'prop-types';
++import { Metrix } from '../../../../../src/Config';
++
++
+ 
+ import Img from '../Img';
+ import { BackIcon } from '../Icons';
+@@ -37,6 +42,10 @@ class ImageList extends Component {
+     this.setState({ showImg: !showImg });
+   };
+ 
++  iosCloseImg = () => {
++    this.setState({ showImg: false });
++  };
++
+   showImgInModal = indexOfImg => {
+     this.setState({ imgToShow: indexOfImg, showImg: true });
+   };
+@@ -61,6 +70,26 @@ class ImageList extends Component {
+     );
+   };
+ 
++  renderBackBtnModal = () => {
++    const { setModalVisible, title } = this.props;
++
++    return (
++      <View style={styles.backBtnView}>
++        <TouchableOpacity
++          onPress={this.iosCloseImg}
++          style={styles.backBtnTouchableOpacity}
++        >
++          <Image
++            source={{ uri: BackIcon }}
++            resizeMode="contain"
++            style={{ height: 30, marginLeft: -10 }}
++          />
++        </TouchableOpacity>
++        {title && <Text style={styles.title}>{title}</Text>}
++      </View>
++    );
++  };
++
+   renderImages = () => {
+     const { images, backgroundColor } = this.props;
+     const imagesToRender = images.map((img, i) => (
+@@ -86,7 +115,7 @@ class ImageList extends Component {
+     });
+ 
+     return (
+-      <View style={styles.container}>
++      <SafeAreaView style={styles.container}>
+         {this.renderBackBtn()}
+         <ScrollView ref={view => (this.scrollView = view)}>
+           {this.renderImages()}
+@@ -98,6 +127,10 @@ class ImageList extends Component {
+             transparent={false}
+             onRequestClose={() => this.setState({ showImg: false })}
+           >
++            <TouchableOpacity style={{ marginTop: Metrix?.VerticalSize(Platform.OS == 'ios' ? 30 : 0) }}>
++              {this.renderBackBtnModal()}
++            </TouchableOpacity>
++
+             <ImageViewer
+               index={imgToShow}
+               loadingRender={() => (
+@@ -109,7 +142,7 @@ class ImageList extends Component {
+             />
+           </Modal>
+         </View>
+-      </View>
++      </SafeAreaView>
+     );
+   }
+ }
+@@ -118,7 +151,7 @@ ImageList.defaultProps = {
+   backgroundColor: 'lightgreen',
+   index: 0,
+   saveOnLongPress: true,
+-  setModalVisible: () => {},
++  setModalVisible: () => { },
+   title: undefined,
+ };
+ 

@@ -1,0 +1,14 @@
+//Loader Actions
+export const LOADER_TRUE = 'LOADER_TRUE';
+export const LOADER_FALSE = 'LOADER_FALSE';
+export const LOADING_PROGRESS = 'LOADING_PROGRESS';
+export const LOADING_PROGRESS_COMPLETE = 'LOADING_PROGRESS_COMPLETE';
+
+//Auth Actions
+export const SIGNOUT = 'SIGNOUT';
+export const SIGNIN = 'SIGNIN';
+export const UPDATE_TEMP_USER = 'UPDATE_TEMP_USER';
+export const UPDATE_IS_VIEWED_WELCOME = 'UPDATE_IS_VIEWED_WELCOME';
+
+//LANGUGE
+export const UPDATE_LANGUAGE = 'UPDATE_LANGUAGE';
