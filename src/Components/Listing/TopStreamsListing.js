@@ -42,7 +42,11 @@ const TopStreamsListing = () => {
 
   const onPurchase = async () => {
     const data = {live_stream_id: liveItem?.id};
-    await handlePurchase(liveStream.id, () => joinLive(liveItem), data);
+    await handlePurchase(
+      liveStream?.id || liveStream?.productId,
+      () => joinLive(liveItem),
+      data,
+    );
     closeModal();
     // openStripeModal(purchaseInfo, user?.id, 'livestreaming', null, () =>
     //   joinLive(liveItem),
@@ -118,7 +122,10 @@ const TopStreamsListing = () => {
             source={{uri: item?.url[0]}}
           />
           <View style={styles.titleContainer}>
-            <Text allowFontScaling={false} numberOfLines={1} style={styles.videoTitle}>
+            <Text
+              allowFontScaling={false}
+              numberOfLines={1}
+              style={styles.videoTitle}>
               {capitalize(item?.text)}
             </Text>
           </View>

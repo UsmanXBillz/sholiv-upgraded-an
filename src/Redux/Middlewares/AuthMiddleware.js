@@ -619,7 +619,10 @@ export class AuthMiddleware extends React.Component {
   static CommunityCommentReply = ({body, cb}) => {
     return async dispatch => {
       const {token} = Store?.getState()?.AuthReducer?.user;
-      console.log('===REPLY API BODY===', {commentId: body.commentId, text: body.text});
+      console.log('===REPLY API BODY===', {
+        commentId: body.commentId,
+        text: body.text,
+      });
       const data = {
         endPoint: `/community/reply/${body.commentId}`,
         method: 'put',
@@ -789,6 +792,138 @@ export class AuthMiddleware extends React.Component {
       const response = await ApiCaller.Request(data);
       if (response) {
         await cb(response?.data);
+      }
+    };
+  };
+
+  // ARTIST POSTS MIDDLEWARES
+
+  static GetArtistPostById = ({id, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      const data = {
+        endPoint: `/users/post_by/${id}`,
+        method: 'get',
+        headers: {Authorization: token},
+        customUrl: '',
+        dispatch,
+      };
+
+      const response = await ApiCaller.Request(data);
+      if (response) {
+        cb(response?.data?.post);
+      }
+    };
+  };
+
+  static LikeArtistPost = ({body, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      const data = {
+        // endPoint: `/users/post/like/${body.id}`,
+        endPoint: `/community/like/artist_post/${body.id}`,
+        method: 'post',
+        body: body,
+        headers: {Authorization: token},
+        customUrl: '', //If define then call this else call baseUrl + endPoint
+        dispatch,
+      };
+      const response = await ApiCaller.Request(data);
+      console.log(
+        '===========LikeArtistPost===========>',
+        JSON.stringify(response, null, 1),
+      );
+      if (response) {
+        cb(response?.data?.success);
+      }
+    };
+  };
+
+  static CommentArtistPost = ({body, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      const data = {
+        // endPoint: `/users/post/comment/${body.id}`,
+        endPoint: `/community/artist_comment/${body.id}`,
+        method: 'post',
+        body: {text: body.text},
+        headers: {Authorization: token},
+        customUrl: '', //If define then call this else call baseUrl + endPoint
+        dispatch,
+      };
+
+      const response = await ApiCaller.Request(data);
+
+      if (response) {
+        cb(response?.data);
+      }
+    };
+  };
+
+  static CommunityArtistReply = ({body, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      console.log('===ARTIST REPLY API BODY===', {
+        commentId: body.commentId,
+        text: body.text,
+      });
+      const data = {
+        endPoint: `/community/reply/${body.commentId}`,
+        method: 'post',
+        body: {text: body.text},
+        headers: {Authorization: token},
+        customUrl: '', //If define then call this else call baseUrl + endPoint
+        dispatch,
+      };
+
+      const response = await ApiCaller.Request(data);
+      console.log('===ARTIST REPLY API RESPONSE===', response);
+
+      if (response) {
+        cb(response?.data);
+      }
+    };
+  };
+
+  static EditCommentArtistPost = ({body, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      const data = {
+        endPoint: `/users/post/comment/${body.commentId}`,
+        method: 'put',
+        body: {text: body.text},
+        headers: {Authorization: token},
+        customUrl: '', //If define then call this else call baseUrl + endPoint
+        dispatch,
+      };
+
+      const response = await ApiCaller.Request(data);
+
+      if (response) {
+        cb(response?.data);
+      }
+    };
+  };
+
+  static DeleteCommentArtistPost = ({body, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      try {
+        dispatch(LoaderAction.LoaderTrue());
+        const response = await axios.delete(
+          `${BASE_URL}/users/post/comment/${body.commentId}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+            data: {text: 'this comment has been deleted'},
+          },
+        );
+        cb();
+      } catch (error) {
+        console.log('ERROR DELETING ARTIST POST COMMENT', error);
+      } finally {
+        dispatch(LoaderAction.LoaderFalse());
       }
     };
   };

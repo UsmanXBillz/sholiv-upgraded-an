@@ -31,7 +31,7 @@ const FollowingProfileCard = ({item, getStreams}) => {
 
   const onPurchase = async () => {
     const data = {live_stream_id: item.id};
-    await handlePurchase(liveStream.id, cb, data);
+    await handlePurchase(liveStream?.id || liveStream?.productId, cb, data);
     closeModal();
   };
 
@@ -104,7 +104,8 @@ const FollowingProfileCard = ({item, getStreams}) => {
             {'\u2022'} {t('LIVE')}
           </Text>
         </View>
-        <Text allowFontScaling={false}
+        <Text
+          allowFontScaling={false}
           style={[styles.itemName, {marginTop: item?.isLive ? 12 : 20}]}
           numberOfLines={2}>
           {capitalize(item?.user?.name ?? item?.user?.username)}

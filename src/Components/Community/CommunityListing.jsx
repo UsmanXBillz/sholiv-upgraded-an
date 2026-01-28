@@ -66,7 +66,7 @@ const CommunityListing = props => {
         keyExtractor={item => item?.id}
         renderItem={renderCommunityItem}
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{gap: 10, paddingVertical: 20}}
+        contentContainerStyle={{gap: 10, paddingVertical: 20, paddingBottom: 230}}
         ListEmptyComponent={() => (
           <View style={styles.noListContainer}>
             <Text allowFontScaling={false} style={styles.notFoundText}>{t('NO_COMMUNITY_POST')}</Text>

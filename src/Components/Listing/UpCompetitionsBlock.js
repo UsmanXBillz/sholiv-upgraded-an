@@ -39,9 +39,9 @@ const UpCompetitionsBlock = () => {
   const closeModal = () => setConfirmPurchase(false);
 
   const onPurchase = async () => {
-    const payload = {competition_id: item.id};
+    const payload = {competition_id: liveItem.id};
     await handlePurchase(
-      competition.id,
+      competition?.id || competition?.productId,
       () => joinEvent(liveItem),
       payload,
     );
@@ -130,7 +130,10 @@ const UpCompetitionsBlock = () => {
             source={{uri: item?.url[0]}}
           />
           <View style={styles.titleContainer}>
-            <Text allowFontScaling={false} numberOfLines={1} style={styles.videoTitle}>
+            <Text
+              allowFontScaling={false}
+              numberOfLines={1}
+              style={styles.videoTitle}>
               {capitalize(item?.creator?.name) +
                 ' vs ' +
                 capitalize(item?.competitor?.name)}{' '}

@@ -155,6 +155,33 @@ export class ArtistMiddleware extends React.Component {
     };
   }
 
+  static UnFollowArtist(payload, cb) {
+    // console.log('FollowArtist ka payload', payload);
+
+    const user = Store.getState()?.AuthReducer?.user;
+
+    return async dispatch => {
+      const data = {
+        endPoint: '/users/unfollow',
+        method: 'post',
+        body: payload,
+        headers: {Authorization: user?.token},
+        customUrl: '',
+        dispatch,
+      };
+
+      const response = await ApiCaller.Request(data);
+      // console.log(
+      //   'FollowArtistFollowArtistFollowArtistFollowArtist',
+      //   response?.data,
+      // );
+
+      if (response) {
+        cb(response?.data);
+      }
+    };
+  }
+
   static UploadPostArtist({payload, t}) {
     // console.log('UploadImageVideo', payload);
 
@@ -303,8 +330,12 @@ export class ArtistMiddleware extends React.Component {
       };
 
       const response = await ApiCaller.Request(data);
-      if (response?.data?.success) {
-        cb(true);
+
+      if (response?.data) {
+        cb({
+          is_free_follower: response?.data?.free_follower > 0,
+          is_exclusive_follower: response?.data?.success,
+        });
       }
     };
   };
@@ -1219,7 +1250,29 @@ export class ArtistMiddleware extends React.Component {
 
       if (response) {
         console.log('=====FreeFollowArtist=====', response);
-        cb(response?.data?.stream);
+        cb(response?.data);
+      }
+    };
+  }
+
+  static FreeUnFollowArtist({payload, cb}) {
+    const user = Store.getState()?.AuthReducer?.user;
+
+    return async dispatch => {
+      const data = {
+        endPoint: '/follow/unFollow',
+        method: 'post',
+        body: payload,
+        headers: {Authorization: user?.token},
+        customUrl: '',
+        dispatch,
+      };
+
+      const response = await ApiCaller.Request(data);
+
+      if (response) {
+        console.log('=====FreeFollowArtist=====', response);
+        cb(response?.data);
       }
     };
   }

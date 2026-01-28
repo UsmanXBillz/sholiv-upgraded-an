@@ -197,11 +197,10 @@ const SelectArtistsForCompetition = () => {
     }
   };
   const imagePress = ress => {
-    setImage(ress);
+    setImage(Array.isArray(ress) ? ress : [ress]);
+    const photo = Array.isArray(ress) ? ress[0] : ress;
     const fileName = extractFileName(
-      Platform.OS === 'ios'
-        ? ress[0]?.sourceURL ?? ress[0]?.path
-        : ress[0]?.path,
+      Platform.OS === 'ios' ? photo?.sourceURL ?? photo?.path : photo?.path,
     );
     setFormattedFileName(fileName);
   };
@@ -233,7 +232,9 @@ const SelectArtistsForCompetition = () => {
           <View style={gstyles.marginTop30}>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text allowFontScaling={false} style={styles.selected}>{t('SELECTED_ARTISTS')}</Text>
+              <Text allowFontScaling={false} style={styles.selected}>
+                {t('SELECTED_ARTISTS')}
+              </Text>
               {!selectionMode && (
                 <TouchableOpacity
                   onPress={() => {
@@ -278,7 +279,8 @@ const SelectArtistsForCompetition = () => {
               />
             </View>
             {formattedFileName && (
-              <Text allowFontScaling={false}
+              <Text
+                allowFontScaling={false}
                 style={{
                   color: 'white',
                   fontFamily: fonts.MontserratBold,
@@ -298,7 +300,9 @@ const SelectArtistsForCompetition = () => {
                 borderStyle: 'dotted',
                 padding: 10,
               }}>
-              <Text allowFontScaling={false} style={{color: 'white', fontFamily: fonts.MontserratBold}}>
+              <Text
+                allowFontScaling={false}
+                style={{color: 'white', fontFamily: fonts.MontserratBold}}>
                 *Select thumbnail
               </Text>
             </TouchableOpacity>

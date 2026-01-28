@@ -26,12 +26,7 @@ import {
 } from '../../Config';
 import {capitalize, fonts} from '../../Config/Helper';
 import {ArtistMiddleware, ChatMiddleware} from '../../Redux/Middlewares';
-import {
-  ScreenTopImage,
-  Button,
-  Tabs,
-  VideoStreaming,
-} from '../../Components';
+import {ScreenTopImage, Button, Tabs, VideoStreaming} from '../../Components';
 import PaymentConfirmModal from '../../Components/PaymentConfirmModal';
 import {useIAP} from '../../Components/Providers/IAP.Provider';
 import {GeneralAction} from '../../Redux/Actions';
@@ -53,6 +48,7 @@ const ArtistProfile = ({route}) => {
   const [isLoggedUser, setIsLoggedUser] = useState(false);
   const [isPlanFound, setIsPlanFound] = useState(false);
   const [isFollowed, setIsFollowed] = useState(false);
+  const [isFreeFollowed, setIsFreeFollowed] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const [tabName, setTabName] = useState('POSTS');
   const [paymentInfo, setPaymentInfo] = useState(null);
@@ -71,14 +67,21 @@ const ArtistProfile = ({route}) => {
 
   const onPurchase = async () => {
     const data = {artist_id: id};
-    await handlePurchase(artistFollow.id, null, data);
+    await handlePurchase(
+      artistFollow?.id || artistFollow?.productId,
+      null,
+      data,
+    );
     closeModal();
   };
 
   const checkFollowing = userid => {
     const cb = res => {
-      if (res) {
-        setIsFollowed(res);
+      if (res?.is_free_follower) {
+        setIsFreeFollowed(true);
+      }
+      if (res?.is_exclusive_follower) {
+        setIsFollowed(true);
       }
     };
     dispatch(ArtistMiddleware.CheckFollowing({id: userid, cb}));
@@ -86,7 +89,6 @@ const ArtistProfile = ({route}) => {
 
   const getProfileById = () => {
     const cb = res => {
-      console.log("===artist===>", JSON.stringify(res, null, 1));
       setData(res);
       if (res?.id !== user?.id) {
         setIsLoggedUser(false);
@@ -212,7 +214,11 @@ const ArtistProfile = ({route}) => {
       }
     };
 
-    dispatch(ArtistMiddleware.FollowArtist(payload, cb));
+    if (isFollowed) {
+      dispatch(ArtistMiddleware.UnFollowArtist(payload, cb));
+    } else {
+      dispatch(ArtistMiddleware.FollowArtist(payload, cb));
+    }
   };
 
   const handleFreeFollowToggle = () => {
@@ -220,12 +226,16 @@ const ArtistProfile = ({route}) => {
 
     const cb = data => {
       if (data) {
-        setIsFollowed(true);
-        return getProfileById();
+        setIsFreeFollowed(isFreeFollowed ? false : true);
+        getProfileById();
       }
     };
 
-    dispatch(ArtistMiddleware.FreeFollowArtist({payload, cb}));
+    if (isFreeFollowed) {
+      dispatch(ArtistMiddleware.FreeUnFollowArtist({payload, cb}));
+    } else {
+      dispatch(ArtistMiddleware.FreeFollowArtist({payload, cb}));
+    }
   };
 
   const onCompetitionBtnPress = () => {
@@ -341,7 +351,9 @@ const ArtistProfile = ({route}) => {
 
         {/* Black Container */}
         <View style={styles.blackContainer}>
-          <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}>
             {/* Stats around image - Posts and Following */}
             <View style={styles.statsContainer}>
               {/* Left - Posts */}
@@ -410,7 +422,10 @@ const ArtistProfile = ({route}) => {
             {/* Location */}
             {data?.location && (
               <View style={styles.locationContainer}>
-                <Text allowFontScaling={false} style={styles.locationText} numberOfLines={1} >
+                <Text
+                  allowFontScaling={false}
+                  style={styles.locationText}
+                  numberOfLines={1}>
                   {data?.location}
                 </Text>
               </View>
@@ -466,13 +481,22 @@ const ArtistProfile = ({route}) => {
             ) : (
               <View style={styles.buttonsContainer}>
                 <Button
-                  buttonText={t('FREE_FOLLOWER') || 'Free Follower'}
+                  buttonText={
+                    isFreeFollowed
+                      ? 'Un Follow'
+                      : t('FREE_FOLLOWER') || 'Free Follower'
+                  }
                   onPress={handleFreeFollowToggle}
                   btnStyle={styles.freeFollowerBtn}
                   textStyle={styles.buttonTextStyle}
                 />
                 <Button
-                  buttonText={t('XCLUSIVE_FOLLOW') || 'Xclusive Follow'}
+                  disabled={isFollowed}
+                  buttonText={
+                    isFollowed
+                      ? 'Xclusive Follower'
+                      : t('XCLUSIVE_FOLLOW') || 'Xclusive Follow'
+                  }
                   onPress={handleFollowToggle}
                   btnStyle={styles.xclusiveFollowBtn}
                   textStyle={styles.buttonTextStyle}
@@ -503,7 +527,9 @@ const ArtistProfile = ({route}) => {
             {/* Tabs */}
             <Tabs
               onPress={(tab, index) => handleFilterSelect(tab, index)}
-              tabs={isLoggedUser ? contentTabList : ['POSTS', 'VIDEO_STREAMING']}
+              tabs={
+                isLoggedUser ? contentTabList : ['POSTS', 'VIDEO_STREAMING']
+              }
               style={{width: '100%'}}
               selectedTab={selectedTab}
             />
@@ -518,7 +544,7 @@ const ArtistProfile = ({route}) => {
                 screen={'artist'}
                 canViewLiveStream={canViewLiveStream}
                 isFollowed={isFollowed || isLoggedUser}
-                removeHorizontalPadding={true}
+                // removeHorizontalPadding={true}
               />
             </View>
           </ScrollView>
@@ -770,7 +796,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   videoStreamingWrapper: {
-    marginHorizontal: -Metrix.HorizontalSize(20),
+    // marginHorizontal: -Metrix.HorizontalSize(20),
   },
   buttonTextStyle: {
     fontSize: Metrix.customFontSize(11),

@@ -51,7 +51,11 @@ const NotificationCard = ({
 
   const onPurchase = async () => {
     const data = {live_stream_id: item.id};
-    await handlePurchase(liveStream.id, createAndJoinSession, data);
+    await handlePurchase(
+      liveStream?.id || liveStream?.productId,
+      createAndJoinSession,
+      data,
+    );
     closeModal();
   };
 
@@ -158,19 +162,26 @@ const NotificationCard = ({
         />
       </View>
       <View style={styles.notificationTextContainer}>
-        <Text allowFontScaling={false} numberOfLines={2} style={styles.notificationTitleText}>
+        <Text
+          allowFontScaling={false}
+          numberOfLines={2}
+          style={styles.notificationTitleText}>
           {capitalize(item?.text)}{' '}
         </Text>
         <View style={styles.notificationTimeContainer}>
           {isUpcomingComp ? (
             <View>
-              <Text allowFontScaling={false} style={styles.notificationTimeIndicatorText}>
+              <Text
+                allowFontScaling={false}
+                style={styles.notificationTimeIndicatorText}>
                 {item?.created_id == user?.id ? 'Competitor' : 'Creator'}:{' '}
                 {item?.created_id == user?.id
                   ? item?.competitor?.name ?? item?.competitor?.username
                   : item?.creator?.name ?? item?.creator?.username}
               </Text>
-              <Text allowFontScaling={false} style={styles.notificationTimeIndicatorText}>
+              <Text
+                allowFontScaling={false}
+                style={styles.notificationTimeIndicatorText}>
                 Scheduled for:{' '}
                 {convertToTimezone(
                   item?.competitionDate,
@@ -180,11 +191,15 @@ const NotificationCard = ({
               </Text>
             </View>
           ) : (
-            <Text allowFontScaling={false} style={styles.notificationTimeIndicatorText}>
+            <Text
+              allowFontScaling={false}
+              style={styles.notificationTimeIndicatorText}>
               {moment(item?.createdAt).fromNow()}
             </Text>
           )}
-          <Text allowFontScaling={false} style={styles.notificationTimestampText}>
+          <Text
+            allowFontScaling={false}
+            style={styles.notificationTimestampText}>
             {item?.timestamp}
           </Text>
         </View>
@@ -199,13 +214,22 @@ const NotificationCard = ({
               <TouchableOpacity
                 hitSlop={{bottom: 10, left: 6, right: 4, top: 10}}
                 onPress={() => acceptRequest(item?.id)}>
-                <Text allowFontScaling={false} style={styles.pressableEditText}>{t('ACCEPT')}</Text>
+                <Text allowFontScaling={false} style={styles.pressableEditText}>
+                  {t('ACCEPT')}
+                </Text>
               </TouchableOpacity>
-              <Text allowFontScaling={false} style={{color: Colors.white}}> | </Text>
+              <Text allowFontScaling={false} style={{color: Colors.white}}>
+                {' '}
+                |{' '}
+              </Text>
               <TouchableOpacity
                 hitSlop={{bottom: 10, left: 4, right: 14, top: 10}}
                 onPress={() => deletRequest(item?.id)}>
-                <Text allowFontScaling={false} style={styles.pressableDeleteText}>{t('REJECT')}</Text>
+                <Text
+                  allowFontScaling={false}
+                  style={styles.pressableDeleteText}>
+                  {t('REJECT')}
+                </Text>
               </TouchableOpacity>
             </View>
           )}

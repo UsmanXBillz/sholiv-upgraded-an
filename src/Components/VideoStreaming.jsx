@@ -40,7 +40,7 @@ const VideoStreaming = ({
     // );
     const dataObject = {live_stream_id: liveItem?.id};
     await handlePurchase(
-      liveStream.id,
+      liveStream?.id || liveStream?.productId,
       () => joinStream(liveItem),
       dataObject,
     );
@@ -157,9 +157,9 @@ const VideoStreaming = ({
         contentContainerStyle={{
           paddingBottom: Dimensions.get('screen').height * 0.5,
           gap: 10,
-        //   paddingLeft: Metrix.HorizontalSize(10),
-          marginLeft:28
-        //   alignItems: data && data?.length > 1 ? 'center' : 'flex-start',
+          //   paddingLeft: Metrix.HorizontalSize(10),
+          // marginLeft:28
+          //   alignItems: data && data?.length > 1 ? 'center' : 'flex-start',
         }}
         onEndReached={onEndReachedCall}
         ListEmptyComponent={

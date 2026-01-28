@@ -48,7 +48,8 @@ const PostCard = ({item, user, screen}) => {
                 />
               </View>
               <View style={gstyles.exploreDetailContainer}>
-                <Text allowFontScaling={false}
+                <Text
+                  allowFontScaling={false}
                   style={gstyles.exploreDetailContainerText}
                   onPress={() =>
                     NavigationService.navigate('ArtistProfile', {
@@ -82,7 +83,9 @@ const PostCard = ({item, user, screen}) => {
                   })
                 }
                 style={gstyles.exploreDetailContainer}>
-                <Text allowFontScaling={false} style={gstyles.exploreDetailContainerText}>
+                <Text
+                  allowFontScaling={false}
+                  style={gstyles.exploreDetailContainerText}>
                   {item?.user
                     ? item.user.name ?? item.user.username
                     : item.name ?? item.username}

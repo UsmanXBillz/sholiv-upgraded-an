@@ -51,7 +51,9 @@ const ArtistListingCard = ({
           <Text allowFontScaling={false} style={styles.artistName}>
             {capitalize(data?.name ?? data?.username)}
           </Text>
-          <Text allowFontScaling={false} style={[styles.artistHandle, gstyles.marginTop5]}>
+          <Text
+            allowFontScaling={false}
+            style={[styles.artistHandle, gstyles.marginTop5]}>
             @{data?.username}
           </Text>
         </View>
@@ -78,6 +80,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    // backgroundColor: 'blue',
+    width: '95%',
   },
   imageContainer: {
     width: Metrix.HorizontalSize(61),
@@ -127,9 +131,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 'auto',
+    // alignItems: 'center',
+    // marginLeft: 'auto',
     flexDirection: 'row',
+    // backgroundColor: 'red',
+    zIndex: 1000,
   },
   followButton: {
     backgroundColor: Colors.red,

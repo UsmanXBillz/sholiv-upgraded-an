@@ -48,7 +48,7 @@ const TopStreams = () => {
     // );
     const extraData = {live_stream_id: liveItem.id};
     await handlePurchase(
-      liveStream.id,
+      liveStream?.id || liveStream?.productId,
       () => joinEvent(liveItem),
       extraData,
     );
@@ -124,7 +124,10 @@ const TopStreams = () => {
             source={{uri: item?.url[0]}}
           />
           <View style={styles.titleContainer}>
-            <Text allowFontScaling={false} numberOfLines={1} style={styles.videoTitle}>
+            <Text
+              allowFontScaling={false}
+              numberOfLines={1}
+              style={styles.videoTitle}>
               {capitalize(item?.text)}
             </Text>
             <Text allowFontScaling={false} style={styles.postTitleMessage}>

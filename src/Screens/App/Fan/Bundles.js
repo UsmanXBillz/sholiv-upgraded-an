@@ -51,37 +51,6 @@ const Bundles = ({route}) => {
 
   const [selectedPlan, setSelectedPlan] = useState(null);
 
-  // useEffect(() => {
-  //   const cb = data => {
-  //     setPlans(data);
-  //   };
-  //   dispatch(
-  //     planType === 'messagePlan'
-  //       ? ChatMiddleware.GetMessagesPlans(cb)
-  //       : AuthMiddleware.GetBundlePlans(cb),
-  //   );
-  // }, [planType]);
-
-  // const handlePlanSelect = plan => {
-  //   setPlanType(plan);
-  //   setSelectedPlan(plan?.id);
-  // };
-  // const onPurchase = () => {
-  //   const cb = data => {
-  //     openStripeModal(
-  //       data,
-  //       null,
-  //       planType,
-  //       planType === 'messagePlan' ? null : plantype,
-  //     );
-  //   };
-  //   dispatch(
-  //     planType === 'messagePlan'
-  //       ? ChatMiddleware.GetMessagesPaymentLink({id: plantype?.id, cb})
-  //       : AuthMiddleware.GetBundlePaymentLink({id: plantype?.id, cb}),
-  //   );
-  // };
-
   return (
     <View style={gstyles.container}>
       <Header back={true} title={'Buy Bundle'} isIcon={false} />
