@@ -23,6 +23,7 @@ const FollowersListing = ({selectedTab, id}) => {
   }, []);
 
   const getAllFollowers = () => {
+    console.log('getAllFollowers', id);
     const cb = res => {
       setNextPage(nextPage + 1);
       setData([...data, ...res]);

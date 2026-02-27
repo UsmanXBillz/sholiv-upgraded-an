@@ -1,6 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {Button, Header, ListEmpty, TransactionCard} from '../../Components';
+import {
+  Button,
+  Header,
+  ListEmpty,
+  PriceBreakdownNote,
+  TransactionCard,
+} from '../../Components';
 import {Colors, Images, Metrix, NavigationService} from '../../Config';
 import {formatAmount} from '../../Config/Helper';
 import {ArtistMiddleware, AuthMiddleware} from '../../Redux/Middlewares';
@@ -140,16 +146,18 @@ const Withdraw = () => {
           </View>
         )}
       />
-      <View style={{marginVertical: 20}}>
+      <View style={{marginVertical: 0}}>
         {!banksList.length && (
-          <Text allowFontScaling={false}
+          <Text
+            allowFontScaling={false}
             style={{
               color: 'white',
               fontSize: 16,
               textAlign: 'center',
             }}>
             You donot have added bank details.{' '}
-            <Text allowFontScaling={false}
+            <Text
+              allowFontScaling={false}
               style={{
                 color: 'white',
                 fontWeight: '600',
@@ -160,28 +168,41 @@ const Withdraw = () => {
           </Text>
         )}
       </View>
+      <PriceBreakdownNote />
       <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
         <View>
-          <Text allowFontScaling={false} style={{...gstyles.incomeLabel, textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{...gstyles.incomeLabel, textAlign: 'center'}}>
             {t('TOTAL_INCOME')}
           </Text>
-          <Text allowFontScaling={false} style={{...gstyles.incomeAmount, textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{...gstyles.incomeAmount, textAlign: 'center'}}>
             ${formatAmount(balanceData.total_earning || 0) ?? '0.00'}
           </Text>
         </View>
         <View>
-          <Text allowFontScaling={false} style={{...gstyles.incomeLabel, textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{...gstyles.incomeLabel, textAlign: 'center'}}>
             {t('Available')}
           </Text>
-          <Text allowFontScaling={false} style={{...gstyles.incomeAmount, textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{...gstyles.incomeAmount, textAlign: 'center'}}>
             ${formatAmount(balanceData.remaining_earning || 0) ?? '0.00'}
           </Text>
         </View>
         <View>
-          <Text allowFontScaling={false} style={{...gstyles.incomeLabel, textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{...gstyles.incomeLabel, textAlign: 'center'}}>
             {t('Requested')}
           </Text>
-          <Text allowFontScaling={false} style={{...gstyles.incomeAmount, textAlign: 'center'}}>
+          <Text
+            allowFontScaling={false}
+            style={{...gstyles.incomeAmount, textAlign: 'center'}}>
             ${formatAmount(balanceData.withdraw_requested || 0) ?? '0.00'}
           </Text>
         </View>
@@ -212,7 +233,9 @@ const Withdraw = () => {
         />
       </View>
       <View style={gstyles.marginTop30}>
-        <Text allowFontScaling={false} style={gstyles.withdraw}>{t('WITHDRAW')}</Text>
+        <Text allowFontScaling={false} style={gstyles.withdraw}>
+          {t('WITHDRAW')}
+        </Text>
         <SelectTrxType
           selectedTab={selectedTab}
           onSelectTab={o => onSelectTab(o)}
@@ -268,19 +291,25 @@ export const SelectTrxType = ({selectedTab, onSelectTab}) => {
         onPress={() => onSelectTab(1)}
         key={'2'}
         style={[styles.tab, selectedTab === 1 && styles.selectedTab]}>
-        <Text allowFontScaling={false} style={[styles.tabText]}>{t('Requested')}</Text>
+        <Text allowFontScaling={false} style={[styles.tabText]}>
+          {t('Requested')}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => onSelectTab(2)}
         key={'1'}
         style={[styles.tab, selectedTab === 2 && styles.selectedTab]}>
-        <Text allowFontScaling={false} style={[styles.tabText]}>{t('Completed')}</Text>
+        <Text allowFontScaling={false} style={[styles.tabText]}>
+          {t('Completed')}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => onSelectTab(3)}
         key={'1'}
         style={[styles.tab, selectedTab === 3 && styles.selectedTab]}>
-        <Text allowFontScaling={false} style={[styles.tabText]}>{t('Rejected')}</Text>
+        <Text allowFontScaling={false} style={[styles.tabText]}>
+          {t('Rejected')}
+        </Text>
       </TouchableOpacity>
     </View>
   );

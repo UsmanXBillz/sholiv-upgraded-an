@@ -54,6 +54,7 @@ import CompetitionSceduling from "./CompetitionSceduling";
 import NotificationCard from "./NotificationCard";
 import CompetitionHeader from "./CompetitionHeader";
 import TranslationComponent from "./TranslationComponent";
+import PriceBreakdownNote from "./PriceBreakdownNote";
 
 export {
     Loader,
@@ -111,5 +112,6 @@ export {
     CreateAccModalBody,
     CompetitionSceduling,
     NotificationCard,
-    TranslationComponent
+    TranslationComponent,
+    PriceBreakdownNote
 }

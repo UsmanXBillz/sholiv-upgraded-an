@@ -53,6 +53,7 @@ import MyCompetetions from './App/MyCompetetions';
 import JoinCompetitionAsFan from './App/JoinCompetitionAsFan';
 import JoinCompetition from './App/JoinCompetition';
 import RecordedLive from './App/RecordedLive';
+import FollowersList from './App/FollowersList';
 import {CommunityScreen} from './App/Community';
 export {
   Login,
@@ -110,5 +111,6 @@ export {
   JoinCompetition,
   JoinCompetitionAsFan,
   RecordedLive,
+  FollowersList,
   CommunityScreen,
 };

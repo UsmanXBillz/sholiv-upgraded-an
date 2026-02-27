@@ -34,6 +34,7 @@ import {GeneralAction} from '../../Redux/Actions';
 const {contentTabList} = AppData;
 
 const ArtistProfile = ({route}) => {
+  console.log('route', route);
   const {top} = useSafeAreaInsets();
   const greyHeight = Metrix.VerticalSize(120);
   const dispatch = useDispatch();
@@ -69,10 +70,13 @@ const ArtistProfile = ({route}) => {
     const data = {artist_id: id};
     await handlePurchase(
       artistFollow?.id || artistFollow?.productId,
-      null,
+      async () => {
+        console.log('RUNNING THE CALLBACK IN PURCHASE');
+        await getProfileById();
+        closeModal();
+      },
       data,
     );
-    closeModal();
   };
 
   const checkFollowing = userid => {
@@ -301,7 +305,15 @@ const ArtistProfile = ({route}) => {
               </TouchableOpacity>
             )}
           </View>
+        </View>
 
+        {/* Floating Profile Image - Absolutely positioned between containers */}
+        <View
+          pointerEvents="box-none"
+          style={[
+            styles.profileImageContainer,
+            {top: top + greyHeight - Metrix.VerticalSize(70)},
+          ]}>
           {/* Menu Options */}
           {isVisible && !isLoggedUser && (
             <View style={styles.optionsContainer}>
@@ -323,14 +335,6 @@ const ArtistProfile = ({route}) => {
               )}
             </View>
           )}
-        </View>
-
-        {/* Floating Profile Image - Absolutely positioned between containers */}
-        <View
-          style={[
-            styles.profileImageContainer,
-            {top: top + greyHeight - Metrix.VerticalSize(70)},
-          ]}>
           <View style={styles.profileImageWrapper}>
             <ScreenTopImage
               image={data?.profile_pic_URL}
@@ -371,38 +375,64 @@ const ArtistProfile = ({route}) => {
               </View>
 
               {/* Right - Following */}
-              <View
+              <TouchableOpacity
                 style={[
                   styles.rightStat,
                   {paddingLeft: Metrix.HorizontalSize(60)},
-                ]}>
+                ]}
+                onPress={() =>
+                  NavigationService.navigate('FollowersList', {
+                    id,
+                    listType: 'following',
+                    artistName: data?.name ?? data?.username,
+                  })
+                }
+                activeOpacity={0.7}>
                 <Text allowFontScaling={false} style={styles.statNumber}>
-                  {data?.followee ?? '0'}
+                  {data?.followee + data?.free_followee ?? '0'}
                 </Text>
                 <Text allowFontScaling={false} style={styles.statLabel}>
                   {t('FOLLOWING')}
                 </Text>
-              </View>
+              </TouchableOpacity>
             </View>
 
             {/* Followers Stats Below Image */}
             <View style={styles.followersRow}>
-              <View style={styles.leftStat}>
+              <TouchableOpacity
+                style={styles.leftStat}
+                onPress={() =>
+                  NavigationService.navigate('FollowersList', {
+                    id,
+                    listType: 'xclusive_followers',
+                    artistName: data?.name ?? data?.username,
+                  })
+                }
+                activeOpacity={0.7}>
                 <Text allowFontScaling={false} style={styles.statNumber}>
                   {data?.xclusive_followers ?? data?.follower ?? '0'}{' '}
                 </Text>
                 <Text allowFontScaling={false} style={styles.followerText}>
                   {t('XCLUSIVE_FOLLOWERS') || 'Xclusive Followers'}
                 </Text>
-              </View>
-              <View style={styles.rightStat}>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.rightStat}
+                onPress={() =>
+                  NavigationService.navigate('FollowersList', {
+                    id,
+                    listType: 'free_followers',
+                    artistName: data?.name ?? data?.username,
+                  })
+                }
+                activeOpacity={0.7}>
                 <Text allowFontScaling={false} style={styles.statNumber}>
                   {data?.free_follower ?? '0'}{' '}
                 </Text>
                 <Text allowFontScaling={false} style={styles.followerText}>
                   {t('FREE_FOLLOWERS') || 'Free Followers'}
                 </Text>
-              </View>
+              </TouchableOpacity>
             </View>
 
             {/* Name */}
@@ -594,8 +624,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     position: 'absolute',
     right: 10,
-    zIndex: 100,
-    top: Metrix.VerticalSize(60),
+    zIndex: 1000000000,
+    top: Metrix.VerticalSize(0),
   },
   optionsBoxText: {
     fontSize: Metrix.customFontSize(12),

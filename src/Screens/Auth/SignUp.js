@@ -7,7 +7,13 @@ import {
   StyleSheet,
 } from 'react-native';
 import gstyles from '../../styles';
-import {Button, TextField, AuthHeader, ScreenTopImage} from '../../Components';
+import {
+  Button,
+  TextField,
+  AuthHeader,
+  ScreenTopImage,
+  PriceBreakdownNote,
+} from '../../Components';
 import {Icons, Metrix, NavigationService, Colors, AppData} from '../../Config';
 import {
   ToastError,
@@ -26,10 +32,14 @@ import UploadImageModal from '../../Components/UploadProfileModal';
 const toastConfig = {
   tomatoToast: ({props}) => (
     <View style={styles.customPasswordToast}>
-      <Text allowFontScaling={false} style={[styles.toastText, {fontWeight: 'bold'}]}>
+      <Text
+        allowFontScaling={false}
+        style={[styles.toastText, {fontWeight: 'bold'}]}>
         {props.text1}
       </Text>
-      <Text allowFontScaling={false} style={styles.toastText}>{props.text2}</Text>
+      <Text allowFontScaling={false} style={styles.toastText}>
+        {props.text2}
+      </Text>
     </View>
   ),
 };
@@ -135,10 +145,14 @@ const SignUp = () => {
         onPress={() => NavigationService.goBack()}
         greeting={t('CREATE_ACCOUNT')}
         title={t('UNLOCK_ENDLESS_ENTERTAINMENT')}
+        containerStyle={{paddingTop: Metrix.VerticalSize(0)}}
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={gstyles.marginVertical50}>
+        <View style={gstyles.marginVertical10}>
+          {(selectedFilter === 'Artist' || selectedFilter === t('ARTIST')) && (
+            <PriceBreakdownNote />
+          )}
           <View style={gstyles.centeredAlignedRow}>
             <View style={styles.filterContainer}>
               {[t('ARTIST'), t('FAN')].map(filter => (
@@ -149,7 +163,8 @@ const SignUp = () => {
                     selectedFilter === filter && styles.selectedFilter,
                   ]}
                   onPress={() => handleFilterSelect(filter)}>
-                  <Text allowFontScaling={false}
+                  <Text
+                    allowFontScaling={false}
                     style={[
                       styles.filterLabel,
                       selectedFilter === filter && styles.selectedFilterText,
@@ -279,7 +294,9 @@ const SignUp = () => {
                 {t('DONT_HAVE_AN_ACCOUNT')}
                 <TouchableOpacity
                   onPress={() => NavigationService.navigate('Login')}>
-                  <Text allowFontScaling={false} style={styles.forgotPassword}>{t('SIGN_IN')}</Text>
+                  <Text allowFontScaling={false} style={styles.forgotPassword}>
+                    {t('SIGN_IN')}
+                  </Text>
                 </TouchableOpacity>
               </Text>
             </View>

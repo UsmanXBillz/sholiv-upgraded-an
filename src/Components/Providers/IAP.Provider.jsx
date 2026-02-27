@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 import {Alert, Platform} from 'react-native';
 import * as IAP from 'react-native-iap';
 import {useDispatch, useSelector} from 'react-redux';
@@ -60,8 +60,8 @@ const IAPProvider = props => {
   const user = useSelector(store => store.AuthReducer.user);
   const iapLoader = useSelector(state => state?.LoaderReducer?.iapLoader);
 
-  const [metadata, setMetadata] = useState(null);
-  const [callback, setCallBack] = useState(null);
+  const callbackRef = useRef(null);
+  const metadataRef = useRef(null);
 
   const dispatch = useDispatch();
 
@@ -133,10 +133,10 @@ const IAPProvider = props => {
     dispatch({type: 'IAP_LOADER_TRUE', payload: true});
     dispatch(LoaderAction.LoaderTrue());
     if (data) {
-      setMetadata(data);
+      metadataRef.current = data;
     }
     if (cb) {
-      setCallBack(cb);
+      callbackRef.current = cb;
     }
     try {
       await IAP.requestPurchase({
@@ -151,6 +151,8 @@ const IAPProvider = props => {
       });
     } catch (err) {
       console.warn(err.code, err.message);
+      callbackRef.current = null;
+      metadataRef.current = null;
     } finally {
       dispatch({type: 'IAP_LOADER_FALSE', payload: false});
       dispatch(LoaderAction.LoaderFalse());
@@ -211,7 +213,6 @@ const IAPProvider = props => {
   const handleIOSPurchaseSuccess = async (purchase, data) => {
     try {
       console.log('======HANDLING IOS SUCCESS======');
-      console.log('123123123123123123123');
       dispatch({type: 'IAP_LOADER_TRUE', payload: true});
       dispatch(LoaderAction.LoaderTrue());
 
@@ -234,8 +235,9 @@ const IAPProvider = props => {
         transactionDate: purchase.transactionDate,
         transactionId: purchase.transactionId,
       };
-      if (data) {
-        Object.keys(data).map(key => (body[key] = data[key]));
+      const payload = data ?? metadataRef.current;
+      if (payload) {
+        Object.keys(payload).forEach(key => (body[key] = payload[key]));
       }
       console.log('======REQUESTING SERVER UPDATE======');
       await handleUpdateServerAboutPurchase(body, () =>
@@ -269,8 +271,9 @@ const IAPProvider = props => {
         transactionId: purchaseObject.transactionId,
       };
 
-      if (data) {
-        Object.keys(data).map(key => (body[key] = data[key]));
+      const payload = data ?? metadataRef.current;
+      if (payload) {
+        Object.keys(payload).forEach(key => (body[key] = payload[key]));
       }
 
       console.log('===body===>', JSON.stringify(body, null, 1));
@@ -295,23 +298,32 @@ const IAPProvider = props => {
     let purchaseErrorListener;
 
     if (isConnected && user) {
-      console.log(' [IAP] PURCHASE LISTENERE USEEFFECT RUNNING=');
+      console.log(' [IAP] PURCHASE LISTENER USEEFFECT RUNNING=');
       purchaseUpdatedListener = IAP.purchaseUpdatedListener(async purchase => {
+        const data = metadataRef.current;
         if (Platform.OS === 'android') {
-          await handleAndroidPurchaseSuccess(purchase, metadata);
+          await handleAndroidPurchaseSuccess(purchase, data);
         }
         if (Platform.OS === 'ios') {
-          await handleIOSPurchaseSuccess(purchase, metadata);
+          await handleIOSPurchaseSuccess(purchase, data);
         }
 
-        if (callback) {
+        const cb = callbackRef.current;
+        if (cb) {
           console.log('==========CALLBACK FIRED=========');
-          await callback();
+          try {
+            await cb();
+          } finally {
+            callbackRef.current = null;
+            metadataRef.current = null;
+          }
         }
       });
 
       purchaseErrorListener = IAP.purchaseErrorListener(error => {
         console.warn('purchaseErrorListener', error);
+        callbackRef.current = null;
+        metadataRef.current = null;
       });
     }
 
@@ -323,7 +335,7 @@ const IAPProvider = props => {
         purchaseErrorListener = null;
       }
     };
-  }, [isConnected, user, metadata]);
+  }, [isConnected, user]);
 
   // useEffect(() => {
   //   (async () => {

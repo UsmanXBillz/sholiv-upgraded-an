@@ -4,6 +4,7 @@ import React, {memo, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   Dimensions,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -17,13 +18,12 @@ import {
 import Carousel from 'react-native-reanimated-carousel';
 import {useDispatch, useSelector} from 'react-redux';
 import {Header, WebViewComponent} from '../../Components';
-import {Colors, Icons, Metrix} from '../../Config';
+import {Colors, Icons, Images, Metrix} from '../../Config';
 import {capitalize, fonts, formattedDate} from '../../Config/Helper';
 import {ArtistMiddleware, AuthMiddleware} from '../../Redux/Middlewares';
 import gstyles from '../../styles';
 import DeleteModal from '../../Components/DeleteModal';
 import PostComments from '../../Components/Community/PostComments';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const {width} = Dimensions.get('window');
@@ -45,11 +45,12 @@ const RenderItem = ({item}) => {
         {isVideo ? (
           <WebViewComponent url={item} />
         ) : (
+          // <></>
           <ImageZoom
             uri={item}
             isDoubleTapEnabled
             style={styles.image}
-            resizeMode="stretch"
+            resizeMode="contain"
           />
         )}
       </View>
@@ -218,7 +219,7 @@ const PostsListing = ({route}) => {
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled">
         {screen === 'explore' ? (
-          <View>
+          <View style={{backgroundColor: 'white'}}>
             <RenderItem
               item={
                 item?.intro_video ? item?.intro_video : item?.profile_pic_URL
@@ -250,10 +251,10 @@ const PostsListing = ({route}) => {
           {/* Like Button */}
           <View style={styles.likeContainer}>
             <TouchableOpacity onPress={likePost} style={styles.likeButton}>
-              <FontAwesome
-                name={isLiked ? 'thumbs-up' : 'thumbs-o-up'}
-                color={Colors.blue}
-                size={30}
+              <Image
+                source={isLiked ? Images.liked : Images.like}
+                style={styles.likeIcon}
+                resizeMode="contain"
               />
             </TouchableOpacity>
             <Text allowFontScaling={false} style={styles.likeCount}>
@@ -343,6 +344,7 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 8,
     width: '100%',
+    backgroundColor: 'white',
     height: '100%',
   },
   postDetailContainer: {
@@ -379,6 +381,10 @@ const styles = StyleSheet.create({
   },
   likeButton: {
     padding: Metrix.HorizontalSize(5),
+  },
+  likeIcon: {
+    width: 30,
+    height: 30,
   },
   likeCount: {
     fontFamily: fonts.MontserratRegular,

@@ -1280,15 +1280,24 @@ export class ArtistMiddleware extends React.Component {
   static GetArtistFollowings({payload, cb}) {
     const user = Store.getState()?.AuthReducer?.user;
 
-    let endpoint = 'follow/followee?';
+    let endpoint = '/follow/followee?';
+
+    const type = payload?.type ?? 2;
+    endpoint += `type=${type}&`;
 
     if (payload?.name) {
       endpoint += `name=${payload.name}&`;
     }
 
     if (payload?.id) {
-      endpoint += `id=${payload.idƒ}&`;
+      endpoint += `id=${payload.id}&`;
     }
+
+    console.log('=====GetArtistFollowings endpoint=====', {
+      endpoint,
+      id: payload?.id,
+      token: user?.token,
+    });
 
     return async dispatch => {
       const data = {
@@ -1301,9 +1310,10 @@ export class ArtistMiddleware extends React.Component {
 
       const response = await ApiCaller.Request(data);
 
-      if (response) {
-        console.log('=====GetArtistFollwees=====', response);
-        cb(response?.data?.stream);
+      if (response?.data) {
+        const rows = response?.data?.Follow?.rows ?? [];
+        const count = response?.data?.Follow?.count ?? 0;
+        cb(rows, count);
       }
     };
   }
@@ -1311,15 +1321,24 @@ export class ArtistMiddleware extends React.Component {
   static GetArtistFollowers({payload, cb}) {
     const user = Store.getState()?.AuthReducer?.user;
 
-    let endpoint = 'follow/follower?';
+    let endpoint = '/follow/follower?';
+
+    const type = payload?.type ?? 2;
+    endpoint += `type=${type}&`;
 
     if (payload?.name) {
       endpoint += `name=${payload.name}&`;
     }
 
     if (payload?.id) {
-      endpoint += `id=${payload.idƒ}&`;
+      endpoint += `id=${payload.id}&`;
     }
+
+    console.log('=====GetArtistFollwers endpoint=====', {
+      endpoint,
+      id: payload?.id,
+      token: user?.token,
+    });
 
     return async dispatch => {
       const data = {
@@ -1332,9 +1351,10 @@ export class ArtistMiddleware extends React.Component {
 
       const response = await ApiCaller.Request(data);
 
-      if (response) {
-        console.log('=====GetArtistFollwers=====', response);
-        cb(response?.data?.stream);
+      if (response?.data) {
+        const rows = response?.data?.Follow?.rows ?? [];
+        const count = response?.data?.Follow?.count ?? 0;
+        cb(rows, count);
       }
     };
   }
