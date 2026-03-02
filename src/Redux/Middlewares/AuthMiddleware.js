@@ -596,6 +596,26 @@ export class AuthMiddleware extends React.Component {
     };
   };
 
+  static UnLikeCommunityPost = ({body, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      const data = {
+        endPoint: `/community/unlike/${body.id}`,
+        method: 'put',
+        body: body,
+        headers: {Authorization: token},
+        customUrl: '', //If define then call this else call baseUrl + endPoint
+        dispatch,
+      };
+
+      const response = await ApiCaller.Request(data);
+
+      if (response) {
+        cb(response?.data);
+      }
+    };
+  };
+
   static CommentCommunityPost = ({body, cb}) => {
     return async dispatch => {
       const {token} = Store?.getState()?.AuthReducer?.user;
@@ -823,6 +843,29 @@ export class AuthMiddleware extends React.Component {
         // endPoint: `/users/post/like/${body.id}`,
         endPoint: `/community/like/artist_post/${body.id}`,
         method: 'post',
+        body: body,
+        headers: {Authorization: token},
+        customUrl: '', //If define then call this else call baseUrl + endPoint
+        dispatch,
+      };
+      const response = await ApiCaller.Request(data);
+      console.log(
+        '===========LikeArtistPost===========>',
+        JSON.stringify(response, null, 1),
+      );
+      if (response) {
+        cb(response?.data?.success);
+      }
+    };
+  };
+
+  static UnLikeArtistPost = ({body, cb}) => {
+    return async dispatch => {
+      const {token} = Store?.getState()?.AuthReducer?.user;
+      const data = {
+        // endPoint: `/users/post/like/${body.id}`,
+        endPoint: `/community/unlike/artist_post/${body.id}`,
+        method: 'put',
         body: body,
         headers: {Authorization: token},
         customUrl: '', //If define then call this else call baseUrl + endPoint

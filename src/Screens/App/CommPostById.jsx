@@ -102,12 +102,19 @@ const CommPostById = props => {
   };
 
   const likePostById = () => {
+    if (!postId) {
+      return;
+    }
+
+    const action = isLiked
+      ? AuthMiddleware.UnLikeCommunityPost
+      : AuthMiddleware.LikeCommunityPost;
+
     dispatch(
-      AuthMiddleware.LikeCommunityPost({
+      action({
         body: {id: postId},
         cb: result => {
-          setIsLiked(p => !p);
-          // setLikeCount(p => (isLiked ? p - 1 : p + 1));
+          setIsLiked(prev => !prev);
           dispatch(GeneralAction.RefetchCommPostAction());
         },
       }),

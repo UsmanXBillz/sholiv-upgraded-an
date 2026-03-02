@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   Platform,
@@ -25,6 +25,7 @@ import {
 import {ArtistMiddleware, AuthMiddleware} from '../../Redux/Middlewares';
 import gstyles from '../../styles';
 import UploadImageModal from '../../Components/UploadProfileModal';
+import {useFocusEffect} from '@react-navigation/native';
 
 const {maxSizeMB, profilePicType, uploadType} = AppData;
 
@@ -57,34 +58,38 @@ const EditProfile = () => {
 
   const userId = useSelector(state => state?.AuthReducer?.user?.id);
 
-  useEffect(() => {
-    getUserprofile();
-    getActivePlan();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      console.log('useFocusEffectuseFocusEffectuseFocusEffect');
+      getUserprofile();
+      getActivePlan();
+    }, [getUserprofile, getActivePlan]),
+  );
 
-  const cb = res => {
+  const cb = useCallback(res => {
+    console.log('===res===>', JSON.stringify(res, null, 1));
     setProfileData(res);
     setEmail(res?.email_address);
     setName(res?.name);
     setLocation(res?.location);
     setBio(res?.bio);
     setProfilePicUrl(res?.profile_pic_URL);
-    setFollowee(res?.followee);
+    setFollowee(res?.followee + res?.free_followee);
     setArtistExpiry(res?.artist_expiry);
-  };
+  }, []);
 
-  const getActivePlan = () => {
+  const getActivePlan = useCallback(() => {
     const cb = data => {
       if (data != 'not found') {
         setIsPlanFound(data?.length);
       }
     };
     dispatch(ArtistMiddleware.GetActivePlan({cb, id: userId}));
-  };
+  }, [userId, dispatch]);
 
-  const getUserprofile = () => {
+  const getUserprofile = useCallback(() => {
     dispatch(AuthMiddleware.GetUserProfile({cb}));
-  };
+  }, [cb, dispatch]);
 
   const updateProfile = () => {
     const isEmailValid = emailValidityCheck(email);
@@ -161,10 +166,9 @@ const EditProfile = () => {
       id: profileData?.id,
       selectedTab: 1,
       isEditProfile: true,
+      isNotype: true,
     });
   };
-
-  console.log("===profilePicUrl===>", JSON.stringify(profilePicUrl, null, 1));
 
   return (
     <View style={gstyles.container}>
@@ -200,8 +204,12 @@ const EditProfile = () => {
           {/* <Text allowFontScaling={false} style={gstyles.artistDescription}>{t('FOLLOWERS')}</Text> */}
 
           <View style={[gstyles.centeredAlignedRow, gstyles.marginTop20]}>
-            <Text allowFontScaling={false} style={gstyles.artistName}>{followee ?? '0'}</Text>
-            <Text allowFontScaling={false} style={[gstyles.artistDescription, gstyles.marginLeft10]}>
+            <Text allowFontScaling={false} style={gstyles.artistName}>
+              {followee ?? '0'}
+            </Text>
+            <Text
+              allowFontScaling={false}
+              style={[gstyles.artistDescription, gstyles.marginLeft10]}>
               {t('FOLLOWING')}
             </Text>
             {
@@ -252,7 +260,9 @@ const EditProfile = () => {
 
         <View style={gstyles.marginVertical20}>
           <View style={styles.formItemContainer}>
-            <Text allowFontScaling={false} style={gstyles.labelStyle}>{t('Bio')} </Text>
+            <Text allowFontScaling={false} style={gstyles.labelStyle}>
+              {t('Bio')}{' '}
+            </Text>
             <View style={styles.descContianer}>
               <Icons.Feather
                 name={'info'}
@@ -287,7 +297,9 @@ const EditProfile = () => {
         </View>
 
         <View style={styles.formItemContainer}>
-          <Text allowFontScaling={false} style={gstyles.labelStyle}>{t('LOCATION')} </Text>
+          <Text allowFontScaling={false} style={gstyles.labelStyle}>
+            {t('LOCATION')}{' '}
+          </Text>
           <View style={styles.descContianer}>
             <Icons.Entypo
               name={'location'}

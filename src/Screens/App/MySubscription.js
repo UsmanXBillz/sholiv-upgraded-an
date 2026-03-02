@@ -50,7 +50,9 @@ const MySubscription = () => {
               />
             ))}
             <View style={styles.remainingCounter}>
-              <Text allowFontScaling={false} style={styles.text}>Remaining Items</Text>
+              <Text allowFontScaling={false} style={styles.text}>
+                Remaining Items
+              </Text>
               <View style={styles.rowWrap}>
                 <Text allowFontScaling={false} style={styles.remainingText}>
                   Live Stream: {bundles[0].live_stream_remaining}
@@ -66,7 +68,9 @@ const MySubscription = () => {
           </ScrollView>
         ) : (
           <View style={styles.errorCOntainer}>
-            <Text allowFontScaling={false} style={styles.text}>{t('NO_SUBSCRIPTION_FOUND')}</Text>
+            <Text allowFontScaling={false} style={styles.text}>
+              {t('NO_SUBSCRIPTION_FOUND')}
+            </Text>
             <Button
               buttonText="GET_SUBSCRIPTION"
               onPress={handleRedirectPurchase}
@@ -102,5 +106,8 @@ const styles = StyleSheet.create({
   remainingText: {
     fontSize: Metrix.customFontSize(12),
     color: 'white',
+  },
+  bundleContainer: {
+    paddingBottom: Metrix.VerticalSize(30),
   },
 });

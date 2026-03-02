@@ -12,7 +12,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
@@ -26,30 +25,21 @@ import DeleteModal from '../../Components/DeleteModal';
 import PostComments from '../../Components/Community/PostComments';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-const {width} = Dimensions.get('window');
+const {width, height: screenHeight} = Dimensions.get('window');
 
-const RenderItem = ({item}) => {
+const RenderItem = ({item, imageWidth, imageHeight}) => {
   const isVideo = item.includes('.mp4');
 
   return (
     <View style={styles.renderItemContainer}>
-      <View style={styles.imageContainer}>
-        {/* <Image
-            source={{ uri: item }}
-            style={styles.image}
-            resizeMode="contain"
-          /> */}
-
-        {/* <WebViewComponent url={"https://video-stream-23.s3.us-east-2.amazonaws.com/user/28/artist_post/09-12-2024_17.781618118286133_03-12-2024_17.781618118286133_video.mp4"} /> */}
-
+      <View style={[styles.imageContainer, {height: imageHeight}]}>
         {isVideo ? (
           <WebViewComponent url={item} />
         ) : (
-          // <></>
           <ImageZoom
             uri={item}
             isDoubleTapEnabled
-            style={styles.image}
+            style={[styles.image, {width: imageWidth, height: imageHeight}]}
             resizeMode="contain"
           />
         )}
@@ -81,9 +71,10 @@ const PostsListing = ({route}) => {
   );
   const [text, setText] = useState('');
   const [postData, setPostData] = useState(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const imageWidth = width * 0.9;
-  const imageHeight = Metrix.VerticalSize(0);
+  const imageHeight = screenHeight * 0.5;
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -127,6 +118,26 @@ const PostsListing = ({route}) => {
       setIsLiked(!!liked);
     }
   }, [postData, currentUser?.id]);
+
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSub = Keyboard.addListener(showEvent, e => {
+      setKeyboardHeight(e.endCoordinates?.height || 0);
+      scrollToBottom();
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   const deletePost = () => {
     dispatch(ArtistMiddleware.DeletePost({id: item?.id}));
@@ -207,28 +218,34 @@ const PostsListing = ({route}) => {
 
   return (
     <KeyboardAvoidingView
-      style={[gstyles.container, {paddingTop: top}]}
+      style={[gstyles.container, styles.container, {paddingTop: top}]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
-      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{flex: 1}}> */}
-      {/* <View style={{flex: 1}}> */}
       <Header back={true} isIcon={false} title={t('POSTS')} />
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.scrollContainer,
+          {paddingBottom: keyboardHeight + Metrix.VerticalSize(40)},
+        ]}
         keyboardShouldPersistTaps="handled">
         {screen === 'explore' ? (
-          <View style={{backgroundColor: 'white'}}>
+          <View>
             <RenderItem
               item={
                 item?.intro_video ? item?.intro_video : item?.profile_pic_URL
               }
               imageWidth={imageWidth}
+              imageHeight={imageHeight}
             />
           </View>
         ) : item?.url?.length === 1 ? (
-          <RenderItem item={item?.url[0]} imageWidth={imageWidth} />
+          <RenderItem
+            item={item?.url[0]}
+            imageWidth={imageWidth}
+            imageHeight={imageHeight}
+          />
         ) : (
           <View style={styles.cardContainer}>
             <Carousel
@@ -307,23 +324,16 @@ const PostsListing = ({route}) => {
         heading="Delete Post"
         detail="Are you sure you want to delete this post?"
       />
-      {/* </View> */}
-      {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
-    // <View>
-    //   <Header back={true} isIcon={false} title={t('POSTS')} />
-    // </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.primary,
   },
-  scrollContainer: {
-    paddingBottom: Metrix.VerticalSize(500),
-  },
+  scrollContainer: {},
   renderItemContainer: {
     marginTop: 40,
   },
@@ -339,13 +349,9 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    height: Metrix.VerticalSize(550),
   },
   image: {
     borderRadius: 8,
-    width: '100%',
-    backgroundColor: 'white',
-    height: '100%',
   },
   postDetailContainer: {
     marginVertical: Metrix.VerticalSize(18),
@@ -383,8 +389,8 @@ const styles = StyleSheet.create({
     padding: Metrix.HorizontalSize(5),
   },
   likeIcon: {
-    width: 30,
-    height: 30,
+    width: 45,
+    height: 45,
   },
   likeCount: {
     fontFamily: fonts.MontserratRegular,

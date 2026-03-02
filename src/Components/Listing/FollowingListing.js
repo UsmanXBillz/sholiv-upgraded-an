@@ -1,88 +1,105 @@
-import { StyleSheet, View, FlatList } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import ArtistListingCard from '../ArtistListingCard'
-import { AppData, Metrix, NavigationService } from '../../Config';
+import {View, FlatList, Text, StyleSheet} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import ArtistListingCard from '../ArtistListingCard';
+import {Metrix, NavigationService} from '../../Config';
 import gstyles from '../../styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { ArtistMiddleware } from '../../Redux/Middlewares';
+import {useDispatch, useSelector} from 'react-redux';
+import {ArtistMiddleware} from '../../Redux/Middlewares';
 import ListEmpty from '../ListEmpty';
 import SearchTextField from '../SearchTextField';
+import {fonts} from '../../Config/Helper';
+import {Colors} from '../../Config';
 const lodash = require('lodash');
 
-const FollowingListing = ({ selectedTab, id }) => {
+const FollowingListing = ({selectedTab, id, type = 2, notype = false}) => {
+  const dispatch = useDispatch();
+  const user = useSelector(state => state?.AuthReducer?.user);
 
-    const dispatch = useDispatch();
+  const [data, setData] = useState([]);
+  const [count, setCount] = useState(0);
+  const [searchText, setSearchText] = useState('');
+  const [searchedData, setSearchedData] = useState([]);
 
-    const user = useSelector(state => state?.AuthReducer?.user);
+  const getFollowing = useCallback(() => {
+    const payload = {id: id || user?.id, type: type ?? 2, notype: notype};
+    const cb = (rows, totalCount) => {
+      const list = Array.isArray(rows) ? rows : [];
+      setData(list);
+      setCount(typeof totalCount === 'number' ? totalCount : list.length);
+    };
+    dispatch(ArtistMiddleware.GetArtistFollowings({payload, cb}));
+  }, [dispatch, id, user?.id, type]);
 
-    const [data, setData] = useState([]);
-    const [searchText, setSearchText] = useState('');
-    const [nextPage, setNextPage] = useState(0);
-    const [searchedData, setSearchedData] = useState([]);
-
-    const getFollowing = () => {
-
-        const cb = res => {
-            setNextPage(nextPage + 1);
-            setData([...data, ...res]);
-        }
-
-        if (user?.id == id) {
-            dispatch(ArtistMiddleware.GetAllFollowing({
-                offset: nextPage,
-                cb
-            }))
-        } else {
-            dispatch(ArtistMiddleware.GetAllFollowing({
-                id,
-                offset: nextPage,
-                cb
-            }))
-        }
+  useEffect(() => {
+    if (id != null || user?.id) {
+      getFollowing();
     }
+  }, [id, user?.id, getFollowing]);
 
-    useEffect(() => {
-        getFollowing();
-    }, [])
-
-    const search = (text) => {
-        setSearchText(text);
-
-        if (text && text[0] !== ' ') {
-
-            let debounce_fun = lodash.debounce(function () {
-                const cb = data => {
-                    setSearchedData((text || !searchedData) ? data : [...searchedData, ...data])
-                }
-                dispatch(ArtistMiddleware.GetAllFollowing({id: (user?.id !== id) ? id: '', cb, name: text.toLowerCase(), offset: 0}));
-
-            }, 1000);
-
-            debounce_fun();
-        } else {
-            getFollowing();
-        }
+  const search = text => {
+    setSearchText(text);
+    if (text && text[0] !== ' ') {
+      const debounce_fun = lodash.debounce(function () {
+        const payload = {
+          id: id || user?.id,
+          name: text.toLowerCase(),
+          type: type ?? 2,
+        };
+        const cb = rows => {
+          const list = Array.isArray(rows) ? rows : [];
+          setSearchedData(list);
+        };
+        dispatch(ArtistMiddleware.GetArtistFollowings({payload, cb}));
+      }, 1000);
+      debounce_fun();
+    } else {
+      setSearchedData([]);
     }
-    return (
-        <View style={gstyles.marginVertical15}>
-            <SearchTextField onChangeText={(text) => search(text)} value={searchText} />
+  };
 
-            <View style={[gstyles.marginVertical10, { height: Metrix.VerticalSize(700) }]}>
-                <FlatList
-                    data={searchText ? searchedData : data}
-                    keyExtractor={(item) => item?.id?.toString()}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ paddingBottom: Metrix.VerticalSize(200) }}
-                    onEndReachedThreshold={0.3}
-                    onEndReached={() => getFollowing()}
-                    ListEmptyComponent={<ListEmpty message={'No Data Found'} />}
-                    renderItem={({ item }) => <ArtistListingCard data={item?.user ?? item?.artist} selectedTab={selectedTab} onPress={() => NavigationService.navigate('UserProfile', { id: item?.user?.id })} />}
-                />
-            </View>
-        </View>
-    )
-}
+  const list = searchText ? searchedData : data;
+  const displayCount = searchText ? list.length : count;
 
-export default FollowingListing
+  return (
+    <View style={gstyles.marginVertical15}>
+      <SearchTextField onChangeText={search} value={searchText} />
+      {displayCount > 0 && (
+        <Text style={styles.countText}>
+          {displayCount} {displayCount === 1 ? 'person' : 'people'}
+        </Text>
+      )}
+      <View
+        style={[gstyles.marginVertical10, {height: Metrix.VerticalSize(700)}]}>
+        <FlatList
+          data={list}
+          keyExtractor={item => item?.id?.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingBottom: Metrix.VerticalSize(200)}}
+          ListEmptyComponent={<ListEmpty message={'No Data Found'} />}
+          renderItem={({item}) => (
+            <ArtistListingCard
+              data={item?.user ?? item?.artist ?? item}
+              selectedTab={selectedTab}
+              onPress={() =>
+                NavigationService.navigate('ArtistProfile', {
+                  id: item?.user?.id ?? item?.artist?.id ?? item?.id,
+                })
+              }
+            />
+          )}
+        />
+      </View>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  countText: {
+    fontSize: Metrix.customFontSize(14),
+    fontFamily: fonts.MontserratRegular,
+    color: Colors.placeholder,
+    marginBottom: Metrix.VerticalSize(8),
+  },
+});
+
+export default FollowingListing;

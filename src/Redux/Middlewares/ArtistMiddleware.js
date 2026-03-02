@@ -1282,8 +1282,12 @@ export class ArtistMiddleware extends React.Component {
 
     let endpoint = '/follow/followee?';
 
-    const type = payload?.type ?? 2;
-    endpoint += `type=${type}&`;
+    console.log('payloadpayloadpayload', payload);
+
+    let type = payload?.type ?? 2;
+    if (!payload?.notype) {
+      endpoint += `type=${type}&`;
+    }
 
     if (payload?.name) {
       endpoint += `name=${payload.name}&`;
