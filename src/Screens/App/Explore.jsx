@@ -1,15 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {useFocusEffect} from '@react-navigation/native';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {
-  FlatList,
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {Header, SearchTextField, VideoStreaming} from '../../Components';
 import {Colors, Metrix} from '../../Config';
@@ -77,7 +69,6 @@ const Explore = () => {
           setSearchedStreams(
             text || !searchedStreams ? data : [...searchedStreams, ...data],
           );
-          Keyboard.dismiss();
         };
         const artistId = selectedFilter?.id !== 'all' ? selectedFilter?.id : '';
         dispatch(
@@ -116,7 +107,8 @@ const Explore = () => {
         key={item.id}
         style={[styles.filterButton, isSelected && styles.selectedFilter]}
         onPress={() => handleFilterSelect(item)}>
-        <Text allowFontScaling={false}
+        <Text
+          allowFontScaling={false}
           style={[styles.filterLabel, isSelected && styles.selectedFilterText]}>
           {item?.name}
         </Text>

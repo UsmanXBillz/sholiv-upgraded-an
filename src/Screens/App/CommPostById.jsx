@@ -86,7 +86,10 @@ const CommPostById = props => {
           if (Array.isArray(result.post.rows) && result.post.rows.length > 0) {
             const postData = result.post.rows[0];
             if (postData) {
-              console.log("===postData?.comunity_comments===>", JSON.stringify(postData?.comunity_comments, null, 1));
+              console.log(
+                '===postData?.comunity_comments===>',
+                JSON.stringify(postData?.comunity_comments, null, 1),
+              );
               setPost(postData);
               setLikeCount(postData?.post?.length ?? 0);
               setComments(postData?.comunity_comments);
@@ -196,6 +199,7 @@ const CommPostById = props => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
       <Header back={true} title={name} icon={false} />
+      <View style={{height: 20}} />
       <ScrollView
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
@@ -215,7 +219,8 @@ const CommPostById = props => {
               <View style={styles.communityInfoContainer}>
                 <View
                   style={{flexDirection: 'row', gap: 2, alignItems: 'center'}}>
-                  <Text allowFontScaling={false}
+                  <Text
+                    allowFontScaling={false}
                     style={styles.userNameText}
                     onPress={() => redirectToProfile(post.user.id)}>
                     {post?.user?.name}
@@ -279,10 +284,15 @@ const CommPostById = props => {
                   {likeCount < 0 ? 0 : likeCount}
                 </Text>
               </View>
-              <Text allowFontScaling={false} style={styles.titleStyle} numberOfLines={2}>
+              <Text
+                allowFontScaling={false}
+                style={styles.titleStyle}
+                numberOfLines={2}>
                 {post?.title ?? ''}
               </Text>
-              <Text allowFontScaling={false} style={styles.descStyle}>{post?.text}</Text>
+              <Text allowFontScaling={false} style={styles.descStyle}>
+                {post?.text}
+              </Text>
             </View>
             <PostComments
               comments={comments}

@@ -21,17 +21,28 @@ const UploadImageModal = ({visible, onClose, onCamera, onAlbum}) => {
       onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text allowFontScaling={false} style={styles.heading}>Upload Image</Text>
+          <View style={styles.headerContainer}>
+            <Text allowFontScaling={false} style={styles.heading}>
+              Upload Image
+            </Text>
+            <TouchableOpacity onPress={onClose}>
+              <Feather name="x" size={25} color="white" />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.buttonRow}>
             <TouchableOpacity style={styles.optionBtn} onPress={handleCamera}>
               <Feather name="camera" size={32} color="white" />
-              <Text allowFontScaling={false} style={styles.optionText}>Camera</Text>
+              <Text allowFontScaling={false} style={styles.optionText}>
+                Camera
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.optionBtn} onPress={handleAlbum}>
               <MaterialIcons name="photo-library" size={32} color="white" />
-              <Text allowFontScaling={false} style={styles.optionText}>Album</Text>
+              <Text allowFontScaling={false} style={styles.optionText}>
+                Album
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -41,6 +52,13 @@ const UploadImageModal = ({visible, onClose, onCamera, onAlbum}) => {
 };
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // alignItems: 'center',
+    width: '100%',
+    // backgroundColor: 'red',
+  },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',

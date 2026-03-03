@@ -154,7 +154,7 @@ const Comment = props => {
             )}
           </View>
           <Text allowFontScaling={false} style={styles.communityDescText}>
-            {formatRelativeTime(createdAt?.createdAt)}
+            {formatRelativeTime(createdAt)}
           </Text>
         </View>
       </View>
@@ -299,6 +299,7 @@ const PostComments = props => {
             deleteComment={deleteComment}
             replyComment={replyComment}
             onReplyPress={onReplyPress}
+            replies={[...item?.replies].reverse()}
           />
         )}
         showsVerticalScrollIndicator={false}
