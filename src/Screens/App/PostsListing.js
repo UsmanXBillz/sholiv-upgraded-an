@@ -32,14 +32,14 @@ const RenderItem = ({item, imageWidth, imageHeight}) => {
 
   return (
     <View style={styles.renderItemContainer}>
-      <View style={[styles.imageContainer, {height: imageHeight}]}>
+      <View style={[styles.imageContainer]}>
         {isVideo ? (
           <WebViewComponent url={item} />
         ) : (
           <ImageZoom
             uri={item}
             isDoubleTapEnabled
-            style={[styles.image, {width: imageWidth, height: imageHeight}]}
+            style={[styles.image]}
             resizeMode="contain"
           />
         )}
@@ -155,15 +155,29 @@ const PostsListing = ({route}) => {
   const likePost = () => {
     if (!item?.id) return;
     // console.log('===LIKE POST API CALL===>', JSON.stringify(item, null, 1));
-    dispatch(
-      AuthMiddleware.LikeArtistPost({
-        body: {id: item.id},
-        cb: result => {
-          setIsLiked(p => !p);
-          getPostById();
-        },
-      }),
-    );
+    if (isLiked) {
+      dispatch(
+        AuthMiddleware.UnLikeArtistPost({
+          body: {id: item.id},
+          cb: result => {
+            setIsLiked(p => !p);
+            setLikeCount(p => p - 1);
+            getPostById();
+          },
+        }),
+      );
+    } else {
+      dispatch(
+        AuthMiddleware.LikeArtistPost({
+          body: {id: item.id},
+          cb: result => {
+            setIsLiked(p => !p);
+            setLikeCount(p => p + 1);
+            getPostById();
+          },
+        }),
+      );
+    }
   };
 
   const commentPost = () => {
@@ -237,7 +251,7 @@ const PostsListing = ({route}) => {
                 item?.intro_video ? item?.intro_video : item?.profile_pic_URL
               }
               imageWidth={imageWidth}
-              imageHeight={imageHeight}
+              // imageHeight={imageHeight}
             />
           </View>
         ) : item?.url?.length === 1 ? (
@@ -287,7 +301,7 @@ const PostsListing = ({route}) => {
                 {capitalize(user ? user : item?.name ?? item?.username)}
                 <Text allowFontScaling={false} style={styles.date}>
                   {' '}
-                  {formattedDate(item?.createdDate)}
+                  {formattedDate(item?.createdAt)}
                 </Text>
               </Text>
             </View>
@@ -344,6 +358,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   imageContainer: {
+    height: '100%',
     borderRadius: 8,
     overflow: 'hidden',
     width: '100%',
@@ -352,6 +367,9 @@ const styles = StyleSheet.create({
   },
   image: {
     borderRadius: 8,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'stretch',
   },
   postDetailContainer: {
     marginVertical: Metrix.VerticalSize(18),
@@ -389,8 +407,8 @@ const styles = StyleSheet.create({
     padding: Metrix.HorizontalSize(5),
   },
   likeIcon: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
   },
   likeCount: {
     fontFamily: fonts.MontserratRegular,

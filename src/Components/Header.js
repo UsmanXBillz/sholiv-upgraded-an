@@ -66,14 +66,16 @@ const Header = ({
                   width: 16,
                   height: 16,
                   borderRadius: 10,
-                  backgroundColor: Colors.onlineGreen,
+                  // backgroundColor: Colors.onlineGreen,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}></View>
             </View>
           )}
           {title && (
-            <Text allowFontScaling={false} style={[gstyles.HeaderTitleText, {color: backBtnColor}]}>
+            <Text
+              allowFontScaling={false}
+              style={[gstyles.HeaderTitleText, {color: backBtnColor}]}>
               {title}
             </Text>
           )}
