@@ -278,7 +278,7 @@ const EditProfile = () => {
                 value={bio}
                 onChangeText={text => {
                   setTextCount(text?.length);
-                  setBio(textCharacterLimit(250, text));
+                  setBio(textCharacterLimit(150, text));
                 }}
               />
             </View>
@@ -290,7 +290,7 @@ const EditProfile = () => {
               marginRight: Metrix.HorizontalSize(6),
             }}>
             <Text allowFontScaling={false} style={gstyles.textLimitStyle}>
-              {bio?.length > 250 ? 250 : bio?.length || 0}/250{' '}
+              {bio?.length > 150 ? 150 : bio?.length || 0}/150{' '}
               {t('CHARACTERS_LEFT')}
             </Text>
           </View>
@@ -314,7 +314,7 @@ const EditProfile = () => {
               placeholderTextColor={Colors.lightGray}
               value={location}
               onChangeText={text => {
-                setLocation(textCharacterLimit(250, text));
+                setLocation(textCharacterLimit(100, text));
                 setLocationTextCount(text?.length);
               }}
             />
@@ -328,7 +328,7 @@ const EditProfile = () => {
             marginRight: Metrix.HorizontalSize(6),
           }}>
           <Text allowFontScaling={false} style={gstyles.textLimitStyle}>
-            {location?.length > 250 ? 250 : location?.length || 0}/250{' '}
+            {location?.length > 100 ? 100 : location?.length || 0}/100{' '}
             {t('CHARACTERS_LEFT')}
           </Text>
         </View>

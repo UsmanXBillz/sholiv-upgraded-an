@@ -601,7 +601,7 @@ export class AuthMiddleware extends React.Component {
       const {token} = Store?.getState()?.AuthReducer?.user;
       const data = {
         endPoint: `/community/unlike/${body.id}`,
-        method: 'put',
+        method: 'post',
         body: body,
         headers: {Authorization: token},
         customUrl: '', //If define then call this else call baseUrl + endPoint
@@ -865,7 +865,7 @@ export class AuthMiddleware extends React.Component {
       const data = {
         // endPoint: `/users/post/like/${body.id}`,
         endPoint: `/community/unlike/artist_post/${body.id}`,
-        method: 'put',
+        method: 'post',
         body: body,
         headers: {Authorization: token},
         customUrl: '', //If define then call this else call baseUrl + endPoint
@@ -873,7 +873,7 @@ export class AuthMiddleware extends React.Component {
       };
       const response = await ApiCaller.Request(data);
       console.log(
-        '===========LikeArtistPost===========>',
+        '===========UNLikeArtistPost===========>',
         JSON.stringify(response, null, 1),
       );
       if (response) {

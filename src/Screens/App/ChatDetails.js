@@ -1,7 +1,15 @@
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Images from 'react-native-chat-images';
 import Toast from 'react-native-toast-message';
 import {useDispatch, useSelector} from 'react-redux';
@@ -98,7 +106,8 @@ const ChatDetails = ({route, navigation}) => {
               alignItems: isOutgoing ? 'flex-end' : 'flex-start',
             },
           ]}>
-          <Text allowFontScaling={false}
+          <Text
+            allowFontScaling={false}
             style={[
               styles.messageText,
               {color: isOutgoing ? Colors.white : Colors.black},
@@ -123,7 +132,8 @@ const ChatDetails = ({route, navigation}) => {
           <TranslationComponent item={item} isOutgoing={isOutgoing} />
 
           <View style={styles.timestampContainer}>
-            <Text allowFontScaling={false}
+            <Text
+              allowFontScaling={false}
               style={[
                 styles.timestamp,
                 {color: isOutgoing ? Colors.white : Colors.black},
@@ -232,12 +242,7 @@ const ChatDetails = ({route, navigation}) => {
   };
 
   const onPickImage = () => {
-    handleSelectMedia(
-      'gallery',
-      setAttachments,
-      attachments,
-      (mediaType = 'photo'),
-    );
+    handleSelectMedia('gallery', setAttachments, attachments, 'photo');
   };
 
   const deleteAttachment = i => {
@@ -251,7 +256,12 @@ const ChatDetails = ({route, navigation}) => {
     </View>
   );
   return (
-    <View style={gstyles.container}>
+    <KeyboardAvoidingView
+      style={gstyles.container}
+      behavior="padding"
+      keyboardVerticalOffset={
+        Platform.OS === 'ios' ? Metrix.VerticalSize(80) : 0
+      }>
       <Header
         back={true}
         title={capitalize(participantData?.name ?? participantData?.username)}
@@ -269,6 +279,7 @@ const ChatDetails = ({route, navigation}) => {
         showsVerticalScrollIndicator={false}
         onEndReachedThreshold={0.2}
         style={{flex: 1}}
+        contentContainerStyle={styles.listContent}
         onEndReached={() => {
           offsetRef.current = false;
           getMessages();
@@ -301,7 +312,7 @@ const ChatDetails = ({route, navigation}) => {
           />
         }
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -348,6 +359,15 @@ const styles = StyleSheet.create({
   },
   otherMessage: {
     alignSelf: 'flex-start',
+  },
+  attachmentListContainer: {
+    paddingVertical: Metrix.VerticalSize(6),
+  },
+  attachmentWrapper: {
+    marginRight: Metrix.HorizontalSize(8),
+  },
+  listContent: {
+    paddingBottom: Metrix.VerticalSize(12),
   },
 });
 export default ChatDetails;

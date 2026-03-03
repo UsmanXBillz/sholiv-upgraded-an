@@ -6,24 +6,24 @@ import MultiLineTextField from './MultiLineTextField';
 const ChatFooter = ({onSendMessage, onPickImage, text, setText}) => {
   return (
     <View style={styles.container}>
-      <View style={{flex: 1, width: '80%'}}>
+      <View style={styles.inputWrapper}>
         <MultiLineTextField
           text={text}
           onChangeText={setText}
-          style={{width: '98%'}}
+          style={{width: '100%'}}
         />
       </View>
 
-      <TouchableOpacity
-        onPress={onPickImage}
-        style={styles.galleryIconContainer}>
+      <TouchableOpacity onPress={onPickImage} style={styles.iconButton}>
         <Icons.Feather
           name={'image'}
           color={Colors.white}
           size={Metrix.customFontSize(22)}
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onSendMessage} style={styles.senIconContainer}>
+      <TouchableOpacity
+        onPress={onSendMessage}
+        style={[styles.iconButton, styles.sendButton]}>
         <Icons.Feather
           name={'send'}
           color={Colors.white}
@@ -43,22 +43,21 @@ const styles = StyleSheet.create({
     height: Metrix.VerticalSize(Platform.OS === 'ios' ? 46 : 52),
   },
   container: {
-    marginBottom: Metrix.VerticalSize(10),
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
+    paddingHorizontal: Metrix.HorizontalSize(8),
+    paddingVertical: Metrix.VerticalSize(8),
   },
-  senIconContainer: {
+  inputWrapper: {
+    flex: 1,
+    marginRight: Metrix.HorizontalSize(8),
+  },
+  iconButton: {
     backgroundColor: Colors.blue,
     padding: Metrix.VerticalSize(10),
     borderRadius: 11,
-    position: 'absolute',
-    right: Platform.OS === 'ios' ? 50 : 40,
   },
-  galleryIconContainer: {
-    backgroundColor: Colors.blue,
-    padding: Metrix.VerticalSize(10),
-    borderRadius: 11,
+  sendButton: {
+    marginLeft: Metrix.HorizontalSize(6),
   },
 });
